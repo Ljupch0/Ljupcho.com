@@ -1,0 +1,149 @@
+
+/*mobile and tablet*/
+@media (max-width: 1000px) {
+  html {
+      font-family: 'Ubuntu';
+      font-size: 23px;
+  }
+  body {
+      margin-left: 20px;
+      margin-bottom: 150px;
+      margin-top:15px;
+  }
+  .name {
+     font-size: 44px;
+     margin-top: 16;
+     margin-bottom: 16;
+  }
+  img.profile {
+     height: auto;
+     width: 175px;
+     border-radius: 100%;
+     margin-bottom: 25;
+  }
+  p {
+      width: 95%;
+  }
+  a {
+      color: #fe4502;
+  }
+  a.code {
+    display: block;
+  }
+
+  a.profile {
+    margin-right: 15px;
+    margin-top:30px;
+    display: block;
+  }
+  .email {
+    margin-top: 30px;
+    border: 2px solid #fe4502;
+    border-radius: 5px;
+    padding: 5px 7.5px;
+    text-decoration:none;
+    text-align: center;
+    margin-right: 15px;
+  }
+
+  .projects {
+    margin-left: 10px;
+  }
+
+  .profiles {
+    margin-top:40px;
+  }
+
+
+}
+
+/* Desktop and larger*/
+@media (min-width: 1000px) {
+  html {
+      font-family: 'Ubuntu';
+      font-size: 23px;
+  }
+
+  body {
+      margin-left: 35px;
+      margin-bottom: 200px;
+      margin-top:15px;
+  }
+
+  div.profiles {
+    margin-top: 50px;
+  }
+
+  div.projects {
+    margin-left: 35px;
+  }
+
+  p {
+      width: 50%;
+      font-size: 1rem;
+  }
+
+  p.normal {
+      font-size: 15px;
+  }
+
+
+  img.profile {
+     height: auto;
+     width: 220px;
+     border-radius: 100%;
+     margin-bottom: 0.5rem;
+  }
+
+  .name {
+     font-size: 2.5rem;
+     margin-top: 1.5rem;
+     margin-bottom: 1.5rem;
+  }
+
+  a {
+      font-size: 1rem;
+      color: #fe4502;
+      border: bold;
+  }
+
+  a.code {
+    display: block;
+  }
+
+  a.profile {
+    margin-right: 15px;
+  }
+
+  a:hover {
+       color: #fe4502;
+       text-decoration:none;
+       cursor:pointer;
+  }
+
+  .email {
+      border: 2px solid #fe4502;
+      border-radius: 5px;
+      padding: 5px 7.5px;
+      text-decoration:none;
+      width: 130px;
+      text-align: center;
+      margin-right: 15px;
+  }
+
+  .email:hover {
+       cursor: pointer;
+       border: 2px dotted #fe4502;
+  }
+
+  .thesis {
+      color:black;
+      margin: 0px;
+      margin-right:auto;
+  }
+
+  .thesis:hover {
+      color:dimgrey;
+      text-decoration:none;
+  }
+}

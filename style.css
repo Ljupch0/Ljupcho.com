@@ -90,8 +90,8 @@
 
   img.profile {
      height: auto;
-     width: 220px;
-     border-radius: 100%;
+     width: 250px;
+     border-radius: 20%;
      margin-bottom: 0.5rem;
   }
 

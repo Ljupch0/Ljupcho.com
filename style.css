@@ -2,7 +2,7 @@
 /*mobile and tablet*/
 @media (max-width: 1000px) {
   html {
-      font-family: 'Ubuntu';
+      font-family: 'Ubuntu', "Arial";
       font-size: 22px;
   }
   body {
@@ -59,7 +59,7 @@
 /* Desktop and larger*/
 @media (min-width: 1000px) {
   html {
-      font-family: 'Ubuntu';
+      font-family: "Ubuntu", "Arial";
       font-size: 22px;
   }
 

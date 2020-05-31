@@ -46,14 +46,14 @@ a:hover {
 }
 
 div.code {
-  background-color: silver;
+  background-color: LightGray;
   padding-left: 20px;
   padding-right: 20px;
   word-wrap: break-word;
 }
 
 code {
-  background-color: silver;
+  background-color: LightGray;
 }
 
 pre {
@@ -114,12 +114,12 @@ a:hover {
 }
 
 div.code {
-  background-color: silver;
+  background-color: LightGray;
   word-wrap: break-word;
 }
 
 code {
-  background-color: silver;
+  background-color: LightGray;
 
 }
 

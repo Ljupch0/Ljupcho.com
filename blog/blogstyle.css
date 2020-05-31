@@ -1,5 +1,5 @@
 
-@media (min-width: 1200px) {
+@media (min-width: 1000px) {
 html {
     font-family: 'Ubuntu Mono';
     font-size: 22px;
@@ -68,14 +68,13 @@ pre {
 
 
 /* Mobile ------------------------------------------------------------ */
-@media (max-width: 1200px) {
+@media (max-width: 1000px) {
 html {
     font-family: 'Ubuntu Mono';
     font-size: 22px;
 }
 
 body {
-  padding: 2rem 3rem;
 }
 
 p {

@@ -133,11 +133,7 @@
                           width = 5,
                           gradientColor = "blue",
                           footer_padding = FALSE,
-                          purrr::pmap(.l = responses, .f = ~ new_post(date = ..1,
-                                                                      person = ..2,
-                                                                      today = ..3,
-                                                                      tomorrow = ..4)
-                                                                      )
+                          purrr::pmap(.l = responses, .f = ~ new_post(date = ..1, person = ..2, today = ..3, tomorrow = ..4))
                           )
           })
       }

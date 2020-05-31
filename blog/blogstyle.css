@@ -1,3 +1,74 @@
+
+@media (min-width: 1000px) {
+html {
+    font-family: 'Ubuntu Mono';
+    font-size: 22px;
+}
+
+body {
+  padding: 2rem 3rem;
+  margin: 50px 250px;
+}
+
+p {
+    font-size: 1rem;
+}
+
+div.comments {
+  border: 2px solid black;
+  padding: 0.5rem;
+}
+
+img.profile {
+   height: auto;
+   width: 220px;
+   border-radius: 100%;
+   margin-bottom: 0.5rem;
+}
+
+.name {
+   font-size: 2.5rem;
+   margin-top: 1.5rem;
+   margin-bottom: 1.5rem;
+}
+
+a {
+    font-size: 1rem;
+    color: #0060B6;
+    border: bold;
+}
+
+
+a:hover {
+     color: #00A0C6;
+     text-decoration:none;
+     cursor:pointer;
+}
+
+div.code {
+  background-color: silver;
+  padding-left: 20px;
+  padding-right: 20px;
+  word-wrap: break-word;
+}
+
+code {
+  background-color: silver;
+}
+
+pre {
+    white-space: pre-wrap;       /* Since CSS 2.1 */
+    white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+    white-space: -pre-wrap;      /* Opera 4-6 */
+    white-space: -o-pre-wrap;    /* Opera 7 */
+    word-wrap: break-word;       /* Internet Explorer 5.5+ */
+}
+
+}
+
+
+/* Mobile ------------------------------------------------------------ */
+@media (max-width: 1000px) {
 html {
     font-family: 'Ubuntu Mono';
     font-size: 22px;
@@ -42,61 +113,22 @@ a:hover {
      cursor:pointer;
 }
 
-
-/* @media only screen and (max-width:640px) {
-    html {
-        font-size: 20px;
-    }
-
-    div {
-    margin: 20px;
+div.code {
+  background-color: silver;
+  word-wrap: break-word;
 }
 
-    p {
-        width: 100%;
-    }
+code {
+  background-color: silver;
 
-    img.profile {
-        width: 180px;
-        height: auto;
-    }
-
-
-    a {
-        display: block;
-        margin-bottom: 15px;
-    }
-
-    .thesis {
-       display: inline;
-    }
-
-
-    #footer {
-      height: 5px;
-    }
 }
 
+pre {
+    white-space: pre-wrap;       /* Since CSS 2.1 */
+    white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+    white-space: -pre-wrap;      /* Opera 4-6 */
+    white-space: -o-pre-wrap;    /* Opera 7 */
+    word-wrap: break-word;       /* Internet Explorer 5.5+ */
+}
 
-@media only screen and (max-width: 1024px) {
-    p {
-        width: 85%;
-    }
-
-    a {
-        display: block;
-        margin-bottom: 15px;
-    }
-
-    .thesis {
-       display: inline;
-    }
-
-    .email {
-      text-align: center;
-    }
-
-    #footer {
-      height: 65px;
-    }
 }

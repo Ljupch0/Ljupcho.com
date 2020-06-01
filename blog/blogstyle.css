@@ -49,8 +49,7 @@ div.code {
   background-color: LightGray;
   padding-left: 20px;
   padding-right: 20px;
-  overflow-y: scroll;
-  overflow-x: auto;
+  overflow:auto;
 }
 
 code {
@@ -110,8 +109,7 @@ a:hover {
 
 div.code {
   background-color: LightGray;
-  overflow-y: scroll;
-  overflow-x: auto;
+  overflow:auto;
 }
 
 code {

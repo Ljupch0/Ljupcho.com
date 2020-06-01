@@ -63,18 +63,18 @@
     </p>
 
     <div class="code"><pre><code>
-      ui <- fluidPage(
-             titlePanel("TaskFlow"),
-             shinyWidgets::useShinydashboard(),
-             tags$head(
-                 tags$style(HTML("
-                 .bg-blue-gradient { color: black; }
-                                 "))
-                 ),
-             fluidRow(
-                 uiOutput("newsfeed")
-                 )
-             )
+ ui <- fluidPage(
+        titlePanel("TaskFlow"),
+        shinyWidgets::useShinydashboard(),
+        tags$head(
+            tags$style(HTML("
+            .bg-blue-gradient { color: black; }
+                            "))
+            ),
+        fluidRow(
+            uiOutput("newsfeed")
+            )
+        )
     </code></pre></div>
 
     <p>
@@ -97,46 +97,42 @@
       Within our function we define the arguments using the notation <code>..1</code> representing that the argument will iterate over the first column of the provided element.
     </p>
     <div class="code"><pre><code>
-      server <- function(input, output) {
-
-          pic <- function(name) {
-              if (name == "Tom") {
-                  "https://i.ibb.co/3kHs9Pv/Tom.jpg"
-              } else if (name == "Gunter") {
-                  "https://i.ibb.co/yB6qrGB/Gunter.jpg"
-              } else if (name == "Amy") {
-                  "https://i.ibb.co/wyR8DBT/Amy.jpg"
-              } else if (name == "Michael") {
-                  "https://i.ibb.co/b2KyzzD/Michael.jpg"
-              } else if (name == "Mark") {
-                  "https://i.ibb.co/fqS4TVh/Mark.jpg"
-              }
-          }
-
-         new_post <- function (person, date, today, tomorrow) {
-             socialBox(title = person,
-                       subtitle = date,
-                       width = 12,
-                       src = pic(person),
-                       footer_padding = FALSE,
-                       #Content
-                       p("What I did today", style="font-weight: bold;"),
-                       p(today),
-                       p("What I plan to do tomorrow", style="font-weight: bold;"),
-                       p(tomorrow)
-                       )
-
-         }
-
-          output$newsfeed <- renderUI({
-              gradientBox(title = "Task Feed: Data Science Team",
-                          width = 5,
-                          gradientColor = "blue",
-                          footer_padding = FALSE,
-                          purrr::pmap(.l = responses, .f = ~ new_post(date = ..1, person = ..2, today = ..3, tomorrow = ..4))
-                          )
-          })
-      }
+ server <- function(input, output) {
+    pic <- function(name) {
+        if (name == "Tom") {
+            "https://i.ibb.co/3kHs9Pv/Tom.jpg"
+        } else if (name == "Gunter") {
+            "https://i.ibb.co/yB6qrGB/Gunter.jpg"
+        } else if (name == "Amy") {
+            "https://i.ibb.co/wyR8DBT/Amy.jpg"
+        } else if (name == "Michael") {
+            "https://i.ibb.co/b2KyzzD/Michael.jpg"
+        } else if (name == "Mark") {
+            "https://i.ibb.co/fqS4TVh/Mark.jpg"
+        }
+    }
+   new_post <- function (person, date, today, tomorrow) {
+       socialBox(title = person,
+                 subtitle = date,
+                 width = 12,
+                 src = pic(person),
+                 footer_padding = FALSE,
+                 #Content
+                 p("What I did today", style="font-weight: bold;"),
+                 p(today),
+                 p("What I plan to do tomorrow", style="font-weight: bold;"),
+                 p(tomorrow)
+                 )
+   }
+    output$newsfeed <- renderUI({
+        gradientBox(title = "Task Feed: Data Science Team",
+                    width = 5,
+                    gradientColor = "blue",
+                    footer_padding = FALSE,
+                    purrr::pmap(.l = responses, .f = ~ new_post(date = ..1, person = ..2, today = ..3, tomorrow = ..4))
+                    )
+    })
+ }
     </code></pre></div>
 
   <h3>Now, time for micromanagment</h3>

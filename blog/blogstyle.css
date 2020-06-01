@@ -56,14 +56,7 @@ code {
   background-color: LightGray;
 }
 
-/*
-pre {
-    white-space: pre-wrap;
-    white-space: -moz-pre-wrap;
-    white-space: -pre-wrap;
-    white-space: -o-pre-wrap;
-    word-wrap: break-word;
-} */
+
 
 }
 
@@ -72,7 +65,7 @@ pre {
 @media (max-width: 1000px) {
 html {
     font-family: 'Ubuntu Mono';
-    font-size: 22px;
+    font-size: 16px;
 }
 
 body {
@@ -115,7 +108,6 @@ a:hover {
 
 div.code {
   background-color: LightGray;
-  word-wrap: break-word;
 }
 
 code {
@@ -123,14 +115,5 @@ code {
   font-size: 1rem;
 
 }
-
-/*
-pre {
-    white-space: pre-wrap;
-    white-space: -moz-pre-wrap;
-    white-space: -pre-wrap;
-    white-space: -o-pre-wrap;
-    word-wrap: break-word;
-} */
 
 }

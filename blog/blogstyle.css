@@ -70,7 +70,7 @@ img {
 @media (max-width: 1000px) {
 html {
     font-family: 'Ubuntu Mono';
-    font-size: 16px;
+    font-size: 18px;
 }
 
 body {
@@ -118,7 +118,7 @@ div.code {
 
 code {
   background-color: LightGray;
-  font-size: 14px;
+  font-size: 16px;
 
 }
 

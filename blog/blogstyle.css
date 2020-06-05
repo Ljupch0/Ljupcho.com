@@ -57,6 +57,10 @@ code {
   font-size: 20px;
 }
 
+img {
+  width: 100%;
+  height: auto;
+}
 
 
 }
@@ -116,6 +120,11 @@ code {
   background-color: LightGray;
   font-size: 14px;
 
+}
+
+img {
+  width: 100%;
+  height: auto;
 }
 
 }

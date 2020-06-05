@@ -36,13 +36,8 @@
       The google form is set to save the responses in a google sheet. Every time the shiny app is launched, it will read in the responses and format them as a news feed.
     </p>
 
-    <p style="text-align: center;"><img src="../assets/shiny_newsfeed.PNG" ></p>
+    <p style="text-align: center;"><img src="../assets/shiny_newsfeed.PNG"></p>
 
-    <h3>The Form</h3>
-    <p style="text-align: center;"><iframe src="https://docs.google.com/forms/d/e/1FAIpQLSfnuh4LMuDDaRk0tLdL80PciO34NDBR4p3HUPbIXtOkTQhJIg/viewform?embedded=true" width="640" height="780" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe></p>
-    <h3>The Data</h3>
-    <p style="text-align: center;"> <iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vSuB4GPTsGzlCVoWCtP5E8h-CXnCceX-sqUY50Ndg5OlsJdNJlhJGJUnkLwZzWDI4EFIPQOsFus9Fp3/pubhtml?gid=1993203334&amp;single=true&amp;widget=true&amp;headers=false" width="925" height="310" frameborder="0" marginheight="0" marginwidth="0"></iframe></p>
-    <br>
     <h3>Reading in the google sheet data</h3>
     <p>The first order of business is reading in the submitted responses.
       Using the new googlesheets4 package, we can easily read in the sheet by providing the link.

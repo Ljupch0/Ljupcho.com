@@ -32,19 +32,6 @@ img.profile {
    margin-bottom: 1.5rem;
 }
 
-a {
-    font-size: 1rem;
-    color: #0060B6;
-    border: bold;
-}
-
-
-a:hover {
-     color: #00A0C6;
-     text-decoration:none;
-     cursor:pointer;
-}
-
 div.code {
   background-color: LightGray;
   padding-left: 20px;
@@ -98,18 +85,7 @@ img.profile {
    margin-bottom: 1.5rem;
 }
 
-a {
-    font-size: 1rem;
-    color: #0060B6;
-    border: bold;
-}
 
-
-a:hover {
-     color: #00A0C6;
-     text-decoration:none;
-     cursor:pointer;
-}
 
 div.code {
   background-color: LightGray;
@@ -126,5 +102,20 @@ img {
   width: 100%;
   height: auto;
 }
+
+}  /* -------------------------------------*/
+
+a {
+    font-size: 1rem;
+    color: #0060B6;
+    border: bold;
+    color: #fe4502;
+}
+
+
+a:hover {
+     color: #fe4502;
+     text-decoration:none;
+     cursor:pointer;
 
 }

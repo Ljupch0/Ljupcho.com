@@ -143,4 +143,11 @@
       color:dimgrey;
       text-decoration:none;
   }
+
+
+}
+
+.published {
+  font-size: 0.75em;
+  color: silver;
 }

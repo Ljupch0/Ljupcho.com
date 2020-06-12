@@ -56,7 +56,7 @@ img {
 /* Mobile ------------------------------------------------------------ */
 @media (max-width: 1000px) {
 html {
-    font-family: 'Ubuntu Mono';
+    font-family: 'Ubuntu';
     font-size: 18px;
 }
 

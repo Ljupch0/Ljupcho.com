@@ -806,13 +806,19 @@ table &lt;- function(company_name, date, quarter, sales, cost_goods, gross_profi
 
 <h3>The Shiny App</h3>
 
-<p>With the HTML and CSS functions ready, we can build out the shiny app. In order to make the code more manageable, I've seperated the table functions in another R script
-
+<p>With the HTML and CSS functions ready, we can build out the shiny app. In order to make the code more manageable,
+  I've seperated the table functions in another R script that is sourced in at the start.
+</p>
+<p>
   In terms of input, the app accepts character for the ticker of the desired company and uses it to download the data.
-A <code>selectizeInput</code> dropdown is generated once the data downloads that allows the user to select one of the quarters available. With that, the data is filtered,
-and this <code>filtered_data()</code> reactive is used by our html function to build out the table. As the inputs to the table can change, we need to generate it using <code>renderUI</code>.
-Lastly we shouln't forget to call <code>table_css()</code> at some location in the ui function to load in the table CSS needed, or our table will look very dull.
-With that the Shiny app is ready to generate styled quarterly income statements for virtually any stock you can think of. </p>
+  A <code>selectizeInput</code> dropdown is generated once the data downloads that allows the user to select one of the quarters available.
+  With that, the data is filtered, and the <code>filtered_data()</code> reactive is used by our html function to build out the table.
+  As the inputs to the table can change, we need to generate it using <code>renderUI</code>.
+</p>
+<p>
+  Lastly we shouln't forget to call <code>table_css()</code> someplace in the ui function, or our table will look very dull.
+  With that the Shiny app is ready to generate styled quarterly income statements for virtually any stock you can think of.
+</p>
 
 <div class="code"><pre><code>
   library(shiny)
@@ -917,7 +923,6 @@ Happy coding!
 
   </div>
   <div class="comments">
-    <p>Written by <a href="https://ljupcho.com">Ljupcho</a></p>
     <p>Have a comment? Want to be added to the R Recipes mailing list? <a href="mailto:lj.naumov@gmail.com?subject=Re: Shiny Excel Templates">Email Me</a></p>
   </div>
 

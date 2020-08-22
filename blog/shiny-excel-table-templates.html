@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>R Recipe: News Feed in your Shiny app</title>
+    <link rel="stylesheet" href="blogstyle.css" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Ubuntu:400,700&amp;subset=cyrillic" rel="stylesheet">
+    <link rel="shortcut icon" type="image/png" href="/Assets/favicon.png"/>
+    <base target="_blank">
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-123654014-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-123654014-1');
+    </script>
+  </head>
+
+  <body>
+    <a href="../index.html">Ljupcho Naumov</a> <a href=../blog.html>Blog</a>
+    <div class="content">
+    <h1>R Recipe: Shiny Tables from Excel Templates</h1>
+    <p>In this recipe we'll see how to use table templates created in Excel. The templates come
+      with all the styling, indenting, and positioning that Excel supports intuitively.</p>
+      <h3>Why?</h3>
+    <p>
+      A task where Excel still beats R/Shiny hands down is in quickly designing professional and good looking tables.
+      R's table libraries are great, however I've found that applying styling to a single cell in a table almost impossible or extremely clunky.
+      This recipe will provide a way to style your perfect table intuitively in Excel, and directly use it as a template in Shiny.
+      This approach also works well when you want to replicate an existing Excel sheet/table in Shiny.
+     </p>
+     <h3>Income Statement Generator</h3>
+     <img src="../assets/IncomeStat/app_preview.gif" alt="App Preview">
+     <p>The example Shiny app we'll be working through will take a stock, and generate its latest quarterly income statement using an existing Excel Income Statment as a template.
+     What's more, the income statments we generate in the Shiny app will be fully copy-pastable back in Excel, with all table indetations and styling preserved.
+     The income statement data will be provided by my {yfinance} package,
+     which wraps the yahoo finance API and can be installed with <code>remotes::install_github("ljupch0/yfinance")</code>.
+
+   </p>
+
+     <h3>Ingredients<h3>
+       <ul>
+          <li>shiny</li>
+          <li>shinydashboard</li>
+          <li>shinydashboardPlus</li>
+          <li>shinyWidgets</li>
+          <li>glue</li>
+          <li>yfinance</li>
+        </ul>
+
+
+
+    <h3>Getting a Template</h3>
+    <p>
+        To get started, we'll take a ready made Excel income statement template from the internet. I selected this <a href="https://www.vertex42.com/ExcelTemplates/income-statement.html">one</a>.
+        With a little cleanup, this is what we're starting with.
+    </p>
+    <img src="../assets/IncomeStat/template_start.PNG">
+    <br>
+    <br>
+
+    <p>Now we define all the variables in the locations where we want to plug in values in Shiny.
+      All the variables need to be in the form of <code>{variable_name}</code>, so that we can easily use the glue package later on.
+      After doing that and deleting the more detailed items, our template looks like this.
+      Download this Excel <a href="../assets/IncomeStat/income-statement-template.xlsx">here</a>, so that you can follow the rest of this recipe in RStudio or wherever you write your shiny apps.
+    </p>
+    <br>
+    <br>
+    <img src="../assets/IncomeStat/template_final.PNG">
+
+    <p>
+      Next is to save the Excel file as a web page. This is where most of the magic happens - Excel converts the table to HTML and styles it with CSS.
+      You can open the saved file in a browser to preview how the table will look in your shiny app.
+      There are some limitations, like cell content not being able to overflow into other cells,
+      so make some adjustments to make sure the final result is as desired.
+    </p>
+
+    <p>Once the table is acceptable, we need to extract only the html that forms the table wihtout the extra code Excel provides you. My way of doing
+      it is to copy the table html in developer tools. If you're not acquainted, open the saved html file in a browser, right click > Inspect to open developer tools.
+      In the elements tab, find the line starting with <code>&lt;table&gt;</code>, right click > Copy > Copy Element.
+      With the html copied, we now go to the Shiny app to build the table function.
+    </p>
+
+
+
+    <div class="code"><pre><code>
+      table <- function(variable_names) {
+        tagList(HTML(glue::glue("
+
+        Paste here the html copied from devtools
+
+                                ")
+        ))
+
+      }
+    </code></pre></div>
+
+    <p>
+      The html we just copied needs to be pasted as a string.
+      As function arguments we need to provide the variables that we defined in Excel like <code>company_name, date, sales</code> and the rest.
+      So the final function looks like this.
+    </p>
+
+    <div class="code"><pre><code>
+table &lt;- function(company_name, date, quarter, sales, cost_goods, gross_profit, SGnA, RnD, total_operating_expenses, operating_income,
+                    other_income_net, interest_expense, EBT, income_tax, income_ops, net_income) {
+  tagList(HTML(glue::glue('
+
+    &lt;table border=&quot;0&quot; cellpadding=&quot;0&quot; cellspacing=&quot;0&quot; width=&quot;954&quot; style=&quot;border-collapse:
+   collapse;table-layout:fixed;width:715pt&quot;&gt;
+   &lt;colgroup&gt;&lt;col class=&quot;xl65&quot; width=&quot;19&quot; style=&quot;mso-width-source:userset;mso-width-alt:608;
+   width:14pt&quot;&gt;
+   &lt;col class=&quot;xl65&quot; width=&quot;43&quot; style=&quot;mso-width-source:userset;mso-width-alt:1376;
+   width:32pt&quot;&gt;
+   &lt;col class=&quot;xl65&quot; width=&quot;325&quot; style=&quot;mso-width-source:userset;mso-width-alt:10400;
+   width:244pt&quot;&gt;
+   &lt;col class=&quot;xl65&quot; width=&quot;127&quot; style=&quot;mso-width-source:userset;mso-width-alt:4064;
+   width:95pt&quot;&gt;
+   &lt;col class=&quot;xl65&quot; width=&quot;124&quot; style=&quot;mso-width-source:userset;mso-width-alt:3968;
+   width:93pt&quot;&gt;
+   &lt;col class=&quot;xl65&quot; width=&quot;19&quot; style=&quot;mso-width-source:userset;mso-width-alt:608;
+   width:14pt&quot;&gt;
+   &lt;col class=&quot;xl65&quot; width=&quot;69&quot; style=&quot;mso-width-source:userset;mso-width-alt:2208;
+   width:52pt&quot;&gt;
+   &lt;col class=&quot;xl65&quot; width=&quot;228&quot; style=&quot;mso-width-source:userset;mso-width-alt:7296;
+   width:171pt&quot;&gt;
+   &lt;/colgroup&gt;&lt;tbody&gt;&lt;tr class=&quot;xl66&quot; height=&quot;35&quot; style=&quot;mso-height-source:userset;height:26.25pt&quot;&gt;
+    &lt;td height=&quot;35&quot; class=&quot;xl66&quot; width=&quot;19&quot; style=&quot;height:26.25pt;width:14pt&quot;&gt;&lt;a name=&quot;Print_Area&quot;&gt;&lt;/a&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl101&quot; colspan=&quot;2&quot; width=&quot;368&quot; style=&quot;mso-ignore:colspan;width:276pt&quot;&gt;{company_name}&lt;/td&gt;
+    &lt;td colspan=&quot;2&quot; class=&quot;xl103&quot; width=&quot;251&quot; style=&quot;width:188pt&quot;&gt;Income Statement&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot; width=&quot;19&quot; style=&quot;width:14pt&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot; width=&quot;69&quot; style=&quot;width:52pt&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot; width=&quot;228&quot; style=&quot;width:171pt&quot;&gt;&lt;/td&gt;
+   &lt;/tr&gt;
+   &lt;tr class=&quot;xl66&quot; height=&quot;17&quot; style=&quot;height:12.75pt&quot;&gt;
+    &lt;td height=&quot;17&quot; class=&quot;xl67&quot; style=&quot;height:12.75pt&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl72&quot;&gt;&lt;/td&gt;
+    &lt;td colspan=&quot;2&quot; class=&quot;xl102&quot;&gt;For the Quarter ending {date}&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl68&quot;&gt;&lt;/td&gt;
+   &lt;/tr&gt;
+   &lt;tr class=&quot;xl66&quot; height=&quot;17&quot; style=&quot;height:12.75pt&quot;&gt;
+    &lt;td height=&quot;17&quot; class=&quot;xl66&quot; style=&quot;height:12.75pt&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl69&quot;&gt;&lt;/td&gt;
+   &lt;/tr&gt;
+   &lt;tr class=&quot;xl66&quot; height=&quot;24&quot; style=&quot;height:18.0pt&quot;&gt;
+    &lt;td height=&quot;24&quot; class=&quot;xl66&quot; style=&quot;height:18.0pt&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl76&quot; colspan=&quot;2&quot; style=&quot;mso-ignore:colspan&quot;&gt;Revenue&lt;/td&gt;
+    &lt;td class=&quot;xl76&quot;&gt;&amp;nbsp;&lt;/td&gt;
+    &lt;td class=&quot;xl94&quot;&gt;{quarter}&lt;/td&gt;
+    &lt;td class=&quot;xl70&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl70&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl70&quot;&gt;&lt;/td&gt;
+   &lt;/tr&gt;
+   &lt;tr class=&quot;xl66&quot; height=&quot;17&quot; style=&quot;height:12.75pt&quot;&gt;
+    &lt;td height=&quot;17&quot; class=&quot;xl66&quot; style=&quot;height:12.75pt&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl72&quot;&gt;Gross sales&lt;/td&gt;
+    &lt;td class=&quot;xl72&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl93&quot;&gt;&lt;span style=&quot;mso-spacerun:yes&quot;&gt;&amp;nbsp;&lt;/span&gt;{sales}&lt;span style=&quot;mso-spacerun:yes&quot;&gt;&amp;nbsp;&lt;/span&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+   &lt;/tr&gt;
+   &lt;tr class=&quot;xl66&quot; height=&quot;21&quot; style=&quot;height:15.75pt&quot;&gt;
+    &lt;td height=&quot;21&quot; class=&quot;xl66&quot; style=&quot;height:15.75pt&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl74&quot;&gt;Net Sales&lt;/td&gt;
+    &lt;td class=&quot;xl74&quot;&gt;&amp;nbsp;&lt;/td&gt;
+    &lt;td class=&quot;xl95&quot;&gt;&lt;span style=&quot;mso-spacerun:yes&quot;&gt;&amp;nbsp;&lt;/span&gt;{sales}&lt;span style=&quot;mso-spacerun:yes&quot;&gt;&amp;nbsp;&lt;/span&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+   &lt;/tr&gt;
+   &lt;tr class=&quot;xl66&quot; height=&quot;17&quot; style=&quot;height:12.75pt&quot;&gt;
+    &lt;td height=&quot;17&quot; class=&quot;xl66&quot; style=&quot;height:12.75pt&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl96&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+   &lt;/tr&gt;
+   &lt;tr class=&quot;xl66&quot; height=&quot;24&quot; style=&quot;height:18.0pt&quot;&gt;
+    &lt;td height=&quot;24&quot; class=&quot;xl66&quot; style=&quot;height:18.0pt&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl76&quot; colspan=&quot;2&quot; style=&quot;mso-ignore:colspan&quot;&gt;Cost of Goods Sold&lt;/td&gt;
+    &lt;td class=&quot;xl76&quot;&gt;&amp;nbsp;&lt;/td&gt;
+    &lt;td class=&quot;xl97&quot;&gt;&amp;nbsp;&lt;/td&gt;
+    &lt;td class=&quot;xl70&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl70&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl70&quot;&gt;&lt;/td&gt;
+   &lt;/tr&gt;
+   &lt;tr class=&quot;xl66&quot; height=&quot;17&quot; style=&quot;height:12.75pt&quot;&gt;
+    &lt;td height=&quot;17&quot; class=&quot;xl66&quot; style=&quot;height:12.75pt&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl72&quot;&gt;Cost of Goods Sold&lt;/td&gt;
+    &lt;td class=&quot;xl72&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl93&quot;&gt;&lt;span style=&quot;mso-spacerun:yes&quot;&gt;&amp;nbsp;&lt;/span&gt;{cost_goods}&lt;span style=&quot;mso-spacerun:yes&quot;&gt;&amp;nbsp;&lt;/span&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl92&quot;&gt;&lt;/td&gt;
+   &lt;/tr&gt;
+   &lt;tr class=&quot;xl66&quot; height=&quot;17&quot; style=&quot;height:12.75pt&quot;&gt;
+    &lt;td height=&quot;17&quot; class=&quot;xl66&quot; style=&quot;height:12.75pt&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl96&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+   &lt;/tr&gt;
+   &lt;tr class=&quot;xl66&quot; height=&quot;21&quot; style=&quot;height:15.75pt&quot;&gt;
+    &lt;td height=&quot;21&quot; class=&quot;xl66&quot; style=&quot;height:15.75pt&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl74&quot;&gt;Gross Profit (Loss)&lt;/td&gt;
+    &lt;td class=&quot;xl74&quot;&gt;&amp;nbsp;&lt;/td&gt;
+    &lt;td class=&quot;xl95&quot;&gt;&lt;span style=&quot;mso-spacerun:yes&quot;&gt;&amp;nbsp;&lt;/span&gt;{gross_profit}&lt;span style=&quot;mso-spacerun:yes&quot;&gt;&amp;nbsp;&lt;/span&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+   &lt;/tr&gt;
+   &lt;tr class=&quot;xl66&quot; height=&quot;17&quot; style=&quot;height:12.75pt&quot;&gt;
+    &lt;td height=&quot;17&quot; class=&quot;xl66&quot; style=&quot;height:12.75pt&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl96&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+   &lt;/tr&gt;
+   &lt;tr class=&quot;xl66&quot; height=&quot;24&quot; style=&quot;height:18.0pt&quot;&gt;
+    &lt;td height=&quot;24&quot; class=&quot;xl71&quot; style=&quot;height:18.0pt&quot;&gt;[42]&lt;/td&gt;
+    &lt;td class=&quot;xl76&quot; colspan=&quot;2&quot; style=&quot;mso-ignore:colspan&quot;&gt;Expenses&lt;/td&gt;
+    &lt;td class=&quot;xl76&quot;&gt;&amp;nbsp;&lt;/td&gt;
+    &lt;td class=&quot;xl97&quot;&gt;&amp;nbsp;&lt;/td&gt;
+    &lt;td class=&quot;xl70&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl70&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl70&quot;&gt;&lt;/td&gt;
+   &lt;/tr&gt;
+   &lt;tr class=&quot;xl66&quot; height=&quot;17&quot; style=&quot;height:12.75pt&quot;&gt;
+    &lt;td height=&quot;17&quot; class=&quot;xl66&quot; style=&quot;height:12.75pt&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl72&quot;&gt;Sales, General &amp;amp; Administrative&lt;/td&gt;
+    &lt;td class=&quot;xl72&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl93&quot;&gt;&lt;span style=&quot;mso-spacerun:yes&quot;&gt;&amp;nbsp;&lt;/span&gt;{SGnA}&lt;span style=&quot;mso-spacerun:yes&quot;&gt;&amp;nbsp;&lt;/span&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+   &lt;/tr&gt;
+   &lt;tr class=&quot;xl66&quot; height=&quot;17&quot; style=&quot;height:12.75pt&quot;&gt;
+    &lt;td height=&quot;17&quot; class=&quot;xl66&quot; style=&quot;height:12.75pt&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl72&quot;&gt;Research and Development&lt;/td&gt;
+    &lt;td class=&quot;xl72&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl93&quot; style=&quot;border-top:none&quot;&gt;&lt;span style=&quot;mso-spacerun:yes&quot;&gt;&amp;nbsp;&lt;/span&gt;{RnD}&lt;span style=&quot;mso-spacerun:yes&quot;&gt;&amp;nbsp;&lt;/span&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+   &lt;/tr&gt;
+   &lt;tr class=&quot;xl66&quot; height=&quot;17&quot; style=&quot;height:12.75pt&quot;&gt;
+    &lt;td height=&quot;17&quot; class=&quot;xl66&quot; style=&quot;height:12.75pt&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl73&quot;&gt;Total Operating Expenses&lt;/td&gt;
+    &lt;td class=&quot;xl73&quot;&gt;&amp;nbsp;&lt;/td&gt;
+    &lt;td class=&quot;xl98&quot;&gt;&lt;span style=&quot;mso-spacerun:yes&quot;&gt;&amp;nbsp;&lt;/span&gt;{total_operating_expenses}&lt;span style=&quot;mso-spacerun:yes&quot;&gt;&amp;nbsp;&lt;/span&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+   &lt;/tr&gt;
+   &lt;tr class=&quot;xl66&quot; height=&quot;17&quot; style=&quot;height:12.75pt&quot;&gt;
+    &lt;td height=&quot;17&quot; class=&quot;xl66&quot; style=&quot;height:12.75pt&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl96&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+   &lt;/tr&gt;
+   &lt;tr class=&quot;xl66&quot; height=&quot;21&quot; style=&quot;height:15.75pt&quot;&gt;
+    &lt;td height=&quot;21&quot; class=&quot;xl66&quot; style=&quot;height:15.75pt&quot;&gt;&lt;/td&gt;
+    &lt;td colspan=&quot;2&quot; class=&quot;xl91&quot;&gt;Operating Income (Loss)&lt;/td&gt;
+    &lt;td class=&quot;xl91&quot;&gt;&amp;nbsp;&lt;/td&gt;
+    &lt;td class=&quot;xl99&quot;&gt;{operating_income}&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+   &lt;/tr&gt;
+   &lt;tr class=&quot;xl66&quot; height=&quot;17&quot; style=&quot;height:12.75pt&quot;&gt;
+    &lt;td height=&quot;17&quot; class=&quot;xl66&quot; style=&quot;height:12.75pt&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl72&quot;&gt;Other Income or Loss&lt;/td&gt;
+    &lt;td class=&quot;xl72&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl93&quot;&gt;&lt;span style=&quot;mso-spacerun:yes&quot;&gt;&amp;nbsp;&lt;/span&gt;{other_income_net}&lt;span style=&quot;mso-spacerun:yes&quot;&gt;&amp;nbsp;&lt;/span&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+   &lt;/tr&gt;
+   &lt;tr class=&quot;xl66&quot; height=&quot;17&quot; style=&quot;height:12.75pt&quot;&gt;
+    &lt;td height=&quot;17&quot; class=&quot;xl66&quot; style=&quot;height:12.75pt&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl72&quot;&gt;Interest Expense&lt;/td&gt;
+    &lt;td class=&quot;xl72&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl93&quot; style=&quot;border-top:none&quot;&gt;&lt;span style=&quot;mso-spacerun:yes&quot;&gt;&amp;nbsp;&lt;/span&gt;{interest_expense}&lt;span style=&quot;mso-spacerun:yes&quot;&gt;&amp;nbsp;&lt;/span&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+   &lt;/tr&gt;
+   &lt;tr class=&quot;xl66&quot; height=&quot;21&quot; style=&quot;height:15.75pt&quot;&gt;
+    &lt;td height=&quot;21&quot; class=&quot;xl66&quot; style=&quot;height:15.75pt&quot;&gt;&lt;/td&gt;
+    &lt;td colspan=&quot;2&quot; class=&quot;xl91&quot;&gt;Earnings Before Tax&lt;/td&gt;
+    &lt;td class=&quot;xl91&quot;&gt;&amp;nbsp;&lt;/td&gt;
+    &lt;td class=&quot;xl99&quot;&gt;{EBT}&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+   &lt;/tr&gt;
+   &lt;tr class=&quot;xl66&quot; height=&quot;17&quot; style=&quot;height:12.75pt&quot;&gt;
+    &lt;td height=&quot;17&quot; class=&quot;xl66&quot; style=&quot;height:12.75pt&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl72&quot;&gt;(Less income tax expense)&lt;/td&gt;
+    &lt;td class=&quot;xl72&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl93&quot;&gt;&lt;span style=&quot;mso-spacerun:yes&quot;&gt;&amp;nbsp;&lt;/span&gt;{income_tax}&lt;span style=&quot;mso-spacerun:yes&quot;&gt;&amp;nbsp;&lt;/span&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+   &lt;/tr&gt;
+   &lt;tr class=&quot;xl66&quot; height=&quot;21&quot; style=&quot;height:15.75pt&quot;&gt;
+    &lt;td height=&quot;21&quot; class=&quot;xl66&quot; style=&quot;height:15.75pt&quot;&gt;&lt;/td&gt;
+    &lt;td colspan=&quot;2&quot; class=&quot;xl91&quot;&gt;Income From Continuing Operations&lt;/td&gt;
+    &lt;td class=&quot;xl91&quot;&gt;&amp;nbsp;&lt;/td&gt;
+    &lt;td class=&quot;xl99&quot;&gt;{income_ops}&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+   &lt;/tr&gt;
+   &lt;tr class=&quot;xl66&quot; height=&quot;17&quot; style=&quot;height:12.75pt&quot;&gt;
+    &lt;td height=&quot;17&quot; class=&quot;xl66&quot; style=&quot;height:12.75pt&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl96&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+   &lt;/tr&gt;
+   &lt;tr class=&quot;xl66&quot; height=&quot;22&quot; style=&quot;height:16.5pt&quot;&gt;
+    &lt;td height=&quot;22&quot; class=&quot;xl66&quot; style=&quot;height:16.5pt&quot;&gt;&lt;/td&gt;
+    &lt;td colspan=&quot;2&quot; class=&quot;xl90&quot;&gt;Net Income&lt;/td&gt;
+    &lt;td class=&quot;xl90&quot;&gt;&amp;nbsp;&lt;/td&gt;
+    &lt;td class=&quot;xl100&quot;&gt;&lt;span style=&quot;mso-spacerun:yes&quot;&gt;&amp;nbsp;&lt;/span&gt;{net_income}&lt;span style=&quot;mso-spacerun:yes&quot;&gt;&amp;nbsp;&lt;/span&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+   &lt;/tr&gt;
+   &lt;tr class=&quot;xl66&quot; height=&quot;18&quot; style=&quot;height:13.5pt&quot;&gt;
+    &lt;td height=&quot;18&quot; class=&quot;xl66&quot; style=&quot;height:13.5pt&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+   &lt;/tr&gt;
+   &lt;tr class=&quot;xl66&quot; height=&quot;17&quot; style=&quot;height:12.75pt&quot;&gt;
+    &lt;td height=&quot;17&quot; class=&quot;xl66&quot; style=&quot;height:12.75pt&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+    &lt;td class=&quot;xl66&quot;&gt;&lt;/td&gt;
+   &lt;/tr&gt;
+   &lt;!--[if supportMisalignedColumns]--&gt;
+   &lt;tr height=&quot;0&quot; style=&quot;display:none&quot;&gt;
+    &lt;td width=&quot;19&quot; style=&quot;width:14pt&quot;&gt;&lt;/td&gt;
+    &lt;td width=&quot;43&quot; style=&quot;width:32pt&quot;&gt;&lt;/td&gt;
+    &lt;td width=&quot;325&quot; style=&quot;width:244pt&quot;&gt;&lt;/td&gt;
+    &lt;td width=&quot;127&quot; style=&quot;width:95pt&quot;&gt;&lt;/td&gt;
+    &lt;td width=&quot;124&quot; style=&quot;width:93pt&quot;&gt;&lt;/td&gt;
+    &lt;td width=&quot;19&quot; style=&quot;width:14pt&quot;&gt;&lt;/td&gt;
+    &lt;td width=&quot;69&quot; style=&quot;width:52pt&quot;&gt;&lt;/td&gt;
+    &lt;td width=&quot;228&quot; style=&quot;width:171pt&quot;&gt;&lt;/td&gt;
+   &lt;/tr&gt;
+   &lt;!--[endif]--&gt;
+  &lt;/tbody&gt;&lt;/table&gt;
+
+                            ')
+    ))
+
+  }
+    </code></pre></div>
+
+  <p>The final result isn't exactly beautiful code, yet again no computer generated code is.
+    When this function is called, R will take the values you provide and plug them in their place in the html.
+    However this is only the html, and while it will generate a table, it won't look good as it doesn't cotain all the CSS needed for styling.
+    We need to include it in a sperate function.
+  </p>
+
+  <p>
+    When you save the Excel file as a webpage, in addition to the html file Excel will also save a folder with the same name.
+    Within the folder, open the stylesheet file in any text editor. Once open, copy the contents. Paste them in the CSS function.
+  </p>
+  <div class="code"><pre><code>
+    table_css &lt;- function() {
+      tags$body(tags$style(HTML('
+
+            Paste the CSS here
+
+    ')))
+    }
+  </code></pre></div>
+
+<p>This function is simpler because it takes no arguments.
+  When it's called it just updates the global CSS of the shiny app to include the styling for our table.
+  Caution: it is possible for some parts of this CSS to clash with other parts of the CSS of your shiny app.
+  Check that after loading the table everything looks as it should.
+</p>
+<p>Another thing that need to be done is to escape all the back slashes. So in your text editor you need to replace all <code>\</code> with <code>\\</code>.
+  The final function looks like this.</p>
+
+<div class="code"><pre><code>
+  table_css &lt;- function() {
+    tags$body(tags$style(HTML('
+
+          tr
+  	{mso-height-source:auto;}
+  col
+  	{mso-width-source:auto;}
+  br
+  	{mso-data-placement:same-cell;}
+  .style43
+  	{mso-number-format:&quot;_\\(\\0022$\\0022* \\#\\,\\#\\#0\\.00_\\)\\;_\\(\\0022$\\0022* \\\\\\(\\#\\,\\#\\#0\\.00\\\\\\)\\;_\\(\\0022$\\0022* \\0022-\\0022??_\\)\\;_\\(\\@_\\)&quot;;
+  	mso-style-name:Currency;
+  	mso-style-id:4;}
+  .style50
+  	{color:blue;
+  	font-size:10.0pt;
+  	font-weight:400;
+  	font-style:normal;
+  	text-decoration:underline;
+  	text-underline-style:single;
+  	font-family:Arial, sans-serif;
+  	mso-font-charset:0;
+  	mso-style-name:Hyperlink;
+  	mso-style-id:8;}
+  .style0
+  	{mso-number-format:General;
+  	text-align:general;
+  	vertical-align:bottom;
+  	white-space:nowrap;
+  	mso-rotate:0;
+  	mso-background-source:auto;
+  	mso-pattern:auto;
+  	color:windowtext;
+  	font-size:11.0pt;
+  	font-weight:400;
+  	font-style:normal;
+  	text-decoration:none;
+  	font-family:Arial, sans-serif;
+  	mso-font-charset:0;
+  	border:none;
+  	mso-protection:locked visible;
+  	mso-style-name:Normal;
+  	mso-style-id:0;}
+  td
+  	{mso-style-parent:style0;
+  	padding:0px;
+  	mso-ignore:padding;
+  	color:windowtext;
+  	font-size:11.0pt;
+  	font-weight:400;
+  	font-style:normal;
+  	text-decoration:none;
+  	font-family:Arial, sans-serif;
+  	mso-font-charset:0;
+  	mso-number-format:General;
+  	text-align:general;
+  	vertical-align:bottom;
+  	border:none;
+  	mso-background-source:auto;
+  	mso-pattern:auto;
+  	mso-protection:locked visible;
+  	white-space:nowrap;
+  	mso-rotate:0;}
+  .xl65
+  	{mso-style-parent:style0;
+  	font-size:10.0pt;}
+  .xl66
+  	{mso-style-parent:style0;
+  	font-size:10.0pt;
+  	vertical-align:middle;}
+  .xl67
+  	{mso-style-parent:style0;
+  	font-size:10.0pt;
+  	text-align:left;
+  	vertical-align:middle;}
+  .xl68
+  	{mso-style-parent:style50;
+  	color:blue;
+  	font-size:10.0pt;
+  	text-decoration:underline;
+  	text-underline-style:single;
+  	vertical-align:middle;}
+  .xl69
+  	{mso-style-parent:style0;
+  	font-size:8.0pt;
+  	vertical-align:middle;}
+  .xl70
+  	{mso-style-parent:style0;
+  	color:white;
+  	font-size:10.0pt;
+  	vertical-align:middle;}
+  .xl71
+  	{mso-style-parent:style0;
+  	color:white;
+  	font-size:2.0pt;
+  	text-align:right;
+  	vertical-align:middle;}
+  .xl72
+  	{mso-style-parent:style0;
+  	font-size:10.0pt;
+  	vertical-align:middle;
+  	mso-protection:unlocked visible;}
+  .xl73
+  	{mso-style-parent:style0;
+  	font-size:10.0pt;
+  	vertical-align:middle;
+  	background:#F2F2F2;
+  	mso-pattern:black none;}
+  .xl74
+  	{mso-style-parent:style0;
+  	font-size:12.0pt;
+  	font-weight:700;
+  	vertical-align:middle;
+  	background:#F2F2F2;
+  	mso-pattern:black none;}
+  .xl75
+  	{mso-style-parent:style0;
+  	font-size:16.0pt;
+  	vertical-align:middle;
+  	mso-protection:unlocked visible;}
+  .xl76
+  	{mso-style-parent:style0;
+  	color:white;
+  	font-size:14.0pt;
+  	font-weight:700;
+  	vertical-align:middle;
+  	background:#3A5D9C;
+  	mso-pattern:black none;}
+  .xl77
+  	{mso-style-parent:style0;
+  	color:white;
+  	font-size:18.0pt;
+  	font-weight:700;
+  	text-align:left;
+  	vertical-align:middle;
+  	border-top:none;
+  	border-right:none;
+  	border-bottom:.5pt solid #3464AB;
+  	border-left:none;
+  	background:#3464AB;
+  	mso-pattern:black none;
+  	padding-left:12px;
+  	mso-char-indent-count:1;}
+  .xl78
+  	{mso-style-parent:style0;
+  	color:white;
+  	font-size:18.0pt;
+  	font-weight:700;
+  	text-align:left;
+  	vertical-align:middle;
+  	border-top:none;
+  	border-right:none;
+  	border-bottom:.5pt solid #3464AB;
+  	border-left:none;
+  	background:#3464AB;
+  	mso-pattern:black none;}
+  .xl79
+  	{mso-style-parent:style0;
+  	color:white;
+  	font-size:18.0pt;
+  	vertical-align:middle;
+  	border-top:none;
+  	border-right:none;
+  	border-bottom:.5pt solid #3464AB;
+  	border-left:none;
+  	background:#3464AB;
+  	mso-pattern:black none;}
+  .xl80
+  	{mso-style-parent:style0;
+  	font-size:10.0pt;
+  	background:white;
+  	mso-pattern:black none;}
+  .xl81
+  	{mso-style-parent:style0;
+  	font-size:12.0pt;
+  	text-align:left;
+  	background:white;
+  	mso-pattern:black none;
+  	white-space:normal;
+  	padding-left:12px;
+  	mso-char-indent-count:1;}
+  .xl82
+  	{mso-style-parent:style0;
+  	background:white;
+  	mso-pattern:black none;}
+  .xl83
+  	{mso-style-parent:style0;
+  	font-size:12.0pt;
+  	background:white;
+  	mso-pattern:black none;}
+  .xl84
+  	{mso-style-parent:style50;
+  	color:blue;
+  	font-size:10.0pt;
+  	text-decoration:underline;
+  	text-underline-style:single;
+  	text-align:left;
+  	background:white;
+  	mso-pattern:black none;
+  	white-space:normal;}
+  .xl85
+  	{mso-style-parent:style0;
+  	font-size:12.0pt;
+  	text-align:left;
+  	background:white;
+  	mso-pattern:black none;
+  	white-space:normal;}
+  .xl86
+  	{mso-style-parent:style0;
+  	font-size:12.0pt;
+  	font-weight:700;
+  	text-align:left;
+  	background:white;
+  	mso-pattern:black none;
+  	white-space:normal;}
+  .xl87
+  	{mso-style-parent:style0;
+  	color:blue;
+  	font-size:12.0pt;
+  	text-decoration:underline;
+  	text-underline-style:single;
+  	text-align:left;
+  	background:white;
+  	mso-pattern:black none;
+  	white-space:normal;}
+  .xl88
+  	{mso-style-parent:style0;
+  	font-size:12.0pt;
+  	text-align:left;
+  	background:white;
+  	mso-pattern:black none;}
+  .xl89
+  	{mso-style-parent:style0;
+  	color:black;
+  	font-size:12.0pt;
+  	text-align:left;
+  	background:white;
+  	mso-pattern:black none;
+  	white-space:normal;}
+  .xl90
+  	{mso-style-parent:style0;
+  	font-size:12.0pt;
+  	font-weight:700;
+  	text-align:left;
+  	vertical-align:middle;
+  	background:#D3DDEF;
+  	mso-pattern:black none;}
+  .xl91
+  	{mso-style-parent:style0;
+  	font-size:12.0pt;
+  	font-weight:700;
+  	text-align:left;
+  	vertical-align:middle;
+  	background:#F2F2F2;
+  	mso-pattern:black none;}
+  .xl92
+  	{mso-style-parent:style0;
+  	color:#3A5D9C;
+  	font-size:9.0pt;
+  	font-weight:700;
+  	vertical-align:middle;}
+  .xl93
+  	{mso-style-parent:style43;
+  	font-size:10.0pt;
+  	mso-number-format:&quot;_\\(* \\#\\,\\#\\#0_\\)\\;_\\(* \\\\\\(\\#\\,\\#\\#0\\\\\\)\\;_\\(* \\0022-\\0022_\\)\\;_\\(\\@_\\)&quot;;
+  	text-align:right;
+  	vertical-align:middle;
+  	border:.5pt solid silver;
+  	mso-protection:unlocked visible;}
+  .xl94
+  	{mso-style-parent:style0;
+  	color:white;
+  	font-size:14.0pt;
+  	font-weight:700;
+  	text-align:right;
+  	vertical-align:middle;
+  	background:#3A5D9C;
+  	mso-pattern:black none;
+  	mso-protection:unlocked visible;}
+  .xl95
+  	{mso-style-parent:style0;
+  	font-size:12.0pt;
+  	font-weight:700;
+  	mso-number-format:&quot;_\\(* \\#\\,\\#\\#0_\\)\\;_\\(* \\\\\\(\\#\\,\\#\\#0\\\\\\)\\;_\\(* \\0022-\\0022_\\)\\;_\\(\\@_\\)&quot;;
+  	text-align:right;
+  	vertical-align:middle;
+  	border-top:.5pt solid windowtext;
+  	border-right:none;
+  	border-bottom:none;
+  	border-left:none;
+  	background:#F2F2F2;
+  	mso-pattern:black none;}
+  .xl96
+  	{mso-style-parent:style0;
+  	font-size:10.0pt;
+  	text-align:right;
+  	vertical-align:middle;}
+  .xl97
+  	{mso-style-parent:style0;
+  	color:white;
+  	font-size:14.0pt;
+  	font-weight:700;
+  	text-align:right;
+  	vertical-align:middle;
+  	background:#3A5D9C;
+  	mso-pattern:black none;}
+  .xl98
+  	{mso-style-parent:style0;
+  	font-size:10.0pt;
+  	mso-number-format:&quot;_\\(* \\#\\,\\#\\#0_\\)\\;_\\(* \\\\\\(\\#\\,\\#\\#0\\\\\\)\\;_\\(* \\0022-\\0022_\\)\\;_\\(\\@_\\)&quot;;
+  	text-align:right;
+  	vertical-align:middle;
+  	border-top:.5pt solid windowtext;
+  	border-right:none;
+  	border-bottom:none;
+  	border-left:none;
+  	background:#F2F2F2;
+  	mso-pattern:black none;}
+  .xl99
+  	{mso-style-parent:style0;
+  	font-size:12.0pt;
+  	font-weight:700;
+  	text-align:right;
+  	vertical-align:middle;
+  	background:#F2F2F2;
+  	mso-pattern:black none;}
+  .xl100
+  	{mso-style-parent:style0;
+  	font-size:12.0pt;
+  	font-weight:700;
+  	mso-number-format:&quot;_\\(* \\#\\,\\#\\#0_\\)\\;_\\(* \\\\\\(\\#\\,\\#\\#0\\\\\\)\\;_\\(* \\0022-\\0022_\\)\\;_\\(\\@_\\)&quot;;
+  	text-align:right;
+  	vertical-align:middle;
+  	border-top:.5pt solid windowtext;
+  	border-right:none;
+  	border-bottom:2.0pt double windowtext;
+  	border-left:none;
+  	background:#D3DDEF;
+  	mso-pattern:black none;}
+  .xl101
+  	{mso-style-parent:style0;
+  	font-size:16.0pt;
+  	font-weight:700;
+  	font-family:Arial, sans-serif;
+  	mso-font-charset:204;
+  	vertical-align:middle;
+  	mso-protection:unlocked visible;}
+  .xl102
+  	{mso-style-parent:style0;
+  	font-size:10.0pt;
+  	text-align:right;
+  	vertical-align:middle;
+  	mso-protection:unlocked visible;}
+  .xl103
+  	{mso-style-parent:style0;
+  	color:#3A5D9C;
+  	font-size:20.0pt;
+  	font-weight:700;
+  	text-align:right;
+  	vertical-align:middle;}
+
+
+  ')))
+  }
+</code></pre></div>
+
+<p>Again, not pretty but it gets the job done. With that we're ready to port this table over in Shiny.</p>
+
+<h3>The Shiny App</h3>
+
+<p>With the HTML and CSS functions ready, we can build out the shiny app. In order to make the code more manageable, I've seperated the table functions in another R script
+
+  In terms of input, the app accepts character for the ticker of the desired company and uses it to download the data.
+A <code>selectizeInput</code> dropdown is generated once the data downloads that allows the user to select one of the quarters available. With that, the data is filtered,
+and this <code>filtered_data()</code> reactive is used by our html function to build out the table. As the inputs to the table can change, we need to generate it using <code>renderUI</code>.
+Lastly we shouln't forget to call <code>table_css()</code> at some location in the ui function to load in the table CSS needed, or our table will look very dull.
+With that the Shiny app is ready to generate styled quarterly income statements for virtually any stock you can think of. </p>
+
+<div class="code"><pre><code>
+  library(shiny)
+  library(shinyWidgets)
+  library(shinydashboard)
+  library(shinydashboardPlus)
+  library(dplyr)
+  library(yfinance)
+
+  source("../table_function.R")
+
+  date_to_quarter <- function(date) {
+      paste0(format(as.Date(date), "%Y"), " Q", lubridate::quarter(date))
+  }
+
+  millions <- function(x) {
+      x/1000000
+  }
+
+  ui <- navbarPage("IncomeStat",
+
+
+        tabPanel(title = "Income Statement",
+                 useShinydashboard(),
+                 useShinyalert(),
+                 table_css(),
+
+                 fluidPage(#theme = shinytheme("cosmo"),
+                     tags$head(
+                         tags$style(HTML("
+                            body, html { background-color: #efefef; }
+
+                         "))
+
+                          ),
+                          fluidRow(
+                              box(title = "Input",
+                                  width= 4,
+                                  textInput("stock", "Stock Symbol", placeholder = "AAPL"),
+                                  actionBttn("download", "Download Data", style = "material-flat", color = "primary", size = "sm", block = TRUE),
+                                  br(),
+                                  uiOutput("select_quarter")
+
+                                  ),
+                              box(title = "Income Statement",
+                                  width = 8,
+                                  uiOutput("income_statement"))
+                          )
+                            ))
+
+  )
+
+  server <- function(input, output) {
+      data <- eventReactive(input$download, {
+          getIncome(ticker = input$stock,
+                    report_type = "quarterly")
+      })
+
+      output$select_quarter <- renderUI(
+          selectizeInput("quarter", "Select Quarter", choices = data()$date )
+      )
+
+      filtered_data <- reactive(
+          data() %>%
+              dplyr::filter(date == input$quarter)
+      )
+
+      output$income_statement <- renderUI(
+          table(company_name = filtered_data()$ticker,
+                date = filtered_data()$date,
+                quarter = date_to_quarter(filtered_data()$date),
+                sales = millions(filtered_data()$totalRevenue),
+                cost_goods = millions(filtered_data()$costOfRevenue),
+                gross_profit = millions(filtered_data()$grossProfit),
+                SGnA = millions(filtered_data()$sellingGeneralAdministrative),
+                RnD = millions(filtered_data()$researchDevelopment),
+                total_operating_expenses = millions(filtered_data()$totalOperatingExpenses),
+                operating_income = millions(filtered_data()$operatingIncome),
+                other_income_net = millions(filtered_data()$totalOtherIncomeExpenseNet) - millions(filtered_data()$interestExpense),
+                interest_expense = millions(filtered_data()$interestExpense),
+                EBT = millions(filtered_data()$incomeBeforeTax),
+                income_tax = millions(filtered_data()$incomeTaxExpense),
+                income_ops = millions(filtered_data()$netIncomeFromContinuingOps),
+                net_income = millions(filtered_data()$netIncome)
+                )
+      )
+
+  }
+
+
+
+
+  shinyApp(ui = ui, server = server)
+</code></pre></div>
+<br>
+<p>I hope you find this approach useful. All the code for the app can be found on <a href="https://github.com/ljupch0/IncomeStat">github</a>.
+  I want to thank <a href="https://twitter.com/_TanHo">Tan Ho</a> for his many useful comments.
+  If you have ideas on improving this process, feel free to reach out on <a href="https://twitter.com/LjNaumov">twitter</a> or via <a href="mailto:lj.naumov@gmail.com?subject=Re: Shiny Excel Templates">email</a>.
+Happy coding!
+ </p>
+ <br>
+
+  </div>
+  <div class="comments">
+    <p>Written by <a href="https://ljupcho.com">Ljupcho</a></p>
+    <p>Have a comment? Want to be added to the R Recipes mailing list? <a href="mailto:lj.naumov@gmail.com?subject=Re: Shiny Excel Templates">Email Me</a></p>
+  </div>
+
+  </body>
+</html>
